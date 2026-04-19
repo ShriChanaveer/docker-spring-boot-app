@@ -50,15 +50,8 @@ Thumbs.db
 *~
 
 # Documentation
-README.md
-HELP.md
 docs/
 *.md
-
-# Docker files (don't include in context)
-Dockerfile*
-docker-compose*.yml
-.dockerignore
 
 # Test files (already tested before building)
 src/test/
