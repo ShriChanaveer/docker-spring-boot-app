@@ -1,0 +1,71 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# IDE files
+.idea
+.vscode
+.eclipse
+.settings
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.factorypath
+
+# Build outputs
+target/
+build/
+out/
+bin/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Documentation
+README.md
+HELP.md
+docs/
+*.md
+
+# Docker files (don't include in context)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Test files (already tested before building)
+src/test/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache

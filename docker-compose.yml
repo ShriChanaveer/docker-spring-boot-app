@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Spring Boot application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: spring-boot-app:latest
+    container_name: spring-boot-app
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    environment:
+      # Server configuration
+      - SERVER_PORT=${SERVER_PORT:-8080}
+      
+      # Database configuration (customize based on your needs)
+      - SPRING_DATASOURCE_URL=${DATABASE_URL:-jdbc:postgresql://postgres:5432/appdb}
+      - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME:-appuser}
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD:-apppassword}
+      
+      # JPA/Hibernate configuration
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${JPA_DDL_AUTO:-update}
+      - SPRING_JPA_SHOW_SQL=${JPA_SHOW_SQL:-false}
+      
+      # Logging configuration
+      - LOGGING_LEVEL_ROOT=${LOG_LEVEL:-INFO}
+      
+      # Additional JVM options (can be overridden)
+      - JAVA_OPTS=${JAVA_OPTS:--XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0}
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+    
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Connect to network
+    networks:
+      - app-network
+    
+    # Depends on database (uncomment if using the database below)
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+
+  # PostgreSQL database service (optional - uncomment if needed)
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: spring-boot-postgres
+  #   environment:
+  #     - POSTGRES_DB=${POSTGRES_DB:-appdb}
+  #     - POSTGRES_USER=${DATABASE_USERNAME:-appuser}
+  #     - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-apppassword}
+  #   ports:
+  #     - "${POSTGRES_PORT:-5432}:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME:-appuser}"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes (uncomment if using database)
+# volumes:
+#   postgres-data:
+#     driver: local
